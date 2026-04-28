@@ -30,15 +30,20 @@ If paired with forward auth, the user experience is **close to Single Sign-On (S
 This guide assumes you have a working Chatwoot + Traefik + Authentik setup, and that you can edit your `docker-compose.yml` and mount files into the Chatwoot container. If you don't know how to setup forward auth, see the [Authentik documentation](https://docs.goauthentik.io/add-secure-apps/providers/proxy/forward_auth/).
 
 ### 1. Mount files into the Chatwoot container
-Example `docker-compose.override.yml`:
+Based on [Chatwoot's docker-compose.production.yaml](https://github.com/chatwoot/chatwoot/blob/6aeda0ddf6d267c7a3807192ab5c75259384819b/docker-compose.production.yaml):
 
 ```yaml
 services:
-  chatwoot:
+  base: &base
+    image: chatwoot/chatwoot:latest-ce
+    env_file: .env # Change this file for customized env variables
     volumes:
+      - storage_data:/app/storage
       - ./overrides/config/initializers/header_auth.rb:/app/config/initializers/header_auth.rb
       - ./overrides/lib/header_auth/strategy.rb:/app/lib/header_auth/strategy.rb
       - ./overrides/lib/header_auth/middleware.rb:/app/lib/header_auth/middleware.rb
+
+# The rest of the file...
 ```
 
 ### 2. Up Chatwoot
